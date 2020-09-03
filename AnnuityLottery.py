@@ -1,6 +1,8 @@
 import re
 import urllib.request
+import numpy as np
 from bs4 import BeautifulSoup
+from collections import defaultdict
 
 class AnnuityLotteryAnalysis:
     def __init__(self):
@@ -23,8 +25,54 @@ class AnnuityLotteryAnalysis:
                     self.NumUnitList[numUnit][num] = int(findNum)
                     num += 1
                 numUnit += 1
-        print(self.NumUnitList)
+        #print(self.NumUnitList)
+
+    def AnalysisAll(self):
+        result = np.empty(len(self.NumUnitList))
+        for i in range(1, len(self.NumUnitList)):
+            result[i] = self.Analysis(i)
+        print("이번주 연금 복권 번호")
+        print('---------------------------------------------------------------------------------')
+        print('십만\t| 만\t| 천\t| 백\t| 십\t| 일')
+        print(f'{result[1]}\t| {result[2]}\t| {result[3]}\t| {result[4]}\t| {result[5]}\t| {result[6]}')
+
+    def Analysis(self, unitNum):
+        numList = self.NumUnitList[unitNum]
+        diffNum = np.empty(len(numList))
+        weightList = np.empty(len(numList))
+        maxNum = 0
+        minNum = 999
+        sumDiff = 0
+        for i in range(len(numList)):
+            if numList[i] > maxNum:
+                maxNum = numList[i]
+            if numList[i] < minNum:
+                minNum = numList[i]
+        maxNum += (maxNum - minNum)
+
+        for i in range(len(numList)):
+            diffNum[i] = maxNum - numList[i]
+            sumDiff += diffNum[i]
+
+        for i in range(len(numList)):
+            weightList[i] = diffNum[i] / sumDiff
+
+        v = np.arange(0, 10)
+        r = np.random.choice(v, 1, p=weightList)
+
+        title = {0: '조 단위', 1: '십만 단위', 2: '만 단위', 3: '천 단위', 4: '백 단위', 5: '십 단위', 6: '일 단위'}
+        print('{0} 번호 출현 리스트 횟수'.format(title[unitNum]))
+        print('---------------------------------------------------------------------------------')
+        print('0\t| 1\t| 2\t| 3\t| 4\t| 5\t| 6\t| 7\t| 8\t| 9')
+        print('---------------------------------------------------------------------------------')
+        print(f'{numList[0]}\t| {numList[1]}\t| {numList[2]}\t| {numList[3]}\t| {numList[4]}\t| {numList[5]}\t| {numList[6]}\t| {numList[7]}\t| {numList[8]}\t| {numList[9]}')
+        print(f'{weightList[0]:.3f}\t| {weightList[1]:.3f}\t| {weightList[2]:.3f}\t| {weightList[3]:.3f}\t| {weightList[4]:.3f}\t| {weightList[5]:.3f}\t| {weightList[6]:.3f}\t| {weightList[7]:.3f}\t| {weightList[8]:.3f}\t| {weightList[9]:.3f}')
+        print(f'추출값: {r}')
+        print('')
+
+        return r
 
 if __name__ == "__main__":
     lotto = AnnuityLotteryAnalysis()
     lotto.UpdateRecentStats()
+    lotto.AnalysisAll()
