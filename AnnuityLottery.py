@@ -6,25 +6,36 @@ from collections import defaultdict
 
 class AnnuityLotteryAnalysis:
     def __init__(self):
+        self.Round = 0
         self.NumUnitList = {}
 
     def UpdateRecentStats(self):
+        self.Round = 0
+        self.NumUnitList = {}
+
         url = 'https://dhlottery.co.kr/gameResult.do?method=index720&wiselog=H_C_10_1'
-        urllib.request.urlretrieve(url, 'AnnuityLotteryStats.html')
-        with open('AnnuityLotteryStats.html') as fp:
-            soup = BeautifulSoup(fp, 'html.parser')
+        with urllib.request.urlopen(url) as respone:
+            html = respone.read()
+            soup = BeautifulSoup(html, 'html.parser')
             tables = soup.find_all(id='printTarget')
-            numUnit = 0;
+            numUnit = 0
             for table in tables:
                 trs = table.tbody.find_all('tr')
                 self.NumUnitList[numUnit] = {}
-                num = 0;
+                num = 0
                 for tr in trs:
                     tds = tr.find_all('td')
                     findNum = re.search('(\d)', tds[2].text).group(0)
                     self.NumUnitList[numUnit][num] = int(findNum)
                     num += 1
                 numUnit += 1
+
+        for nums in self.NumUnitList[0]:
+            self.Round += self.NumUnitList[0][nums]
+
+        print(f'{self.Round}회 연금 복권 취합 됨')
+        print('---------------------------------------------------------------------------------')
+        print('')
 
     def AnalysisAll(self):
         result = np.zeros(len(self.NumUnitList), dtype=int)
