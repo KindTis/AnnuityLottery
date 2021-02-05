@@ -30,8 +30,8 @@ class AnnuityLotteryAnalysis:
                     num += 1
                 numUnit += 1
 
-        for nums in self.NumUnitList[0]:
-            self.Round += self.NumUnitList[0][nums]
+        for nums in self.NumUnitList[1]:
+            self.Round += self.NumUnitList[1][nums]
 
         print(f'{self.Round}회 연금 복권 취합 됨')
         print('---------------------------------------------------------------------------------')
