@@ -25,13 +25,13 @@ class AnnuityLotteryAnalysis:
                 num = 0
                 for tr in trs:
                     tds = tr.find_all('td')
-                    findNum = re.search('(\d)', tds[2].text).group(0)
+                    findNum = re.search('(\d+)', tds[2].text).group(0)
                     self.NumUnitList[numUnit][num] = int(findNum)
                     num += 1
                 numUnit += 1
 
-        for nums in self.NumUnitList[1]:
-            self.Round += self.NumUnitList[1][nums]
+        for nums in self.NumUnitList[0]:
+            self.Round += self.NumUnitList[0][nums]
 
         print(f'{self.Round}회 연금 복권 취합 됨')
         print('---------------------------------------------------------------------------------')
